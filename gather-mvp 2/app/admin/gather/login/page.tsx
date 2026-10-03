@@ -1,0 +1,11 @@
+'use client';
+
+import { FormEvent, useState } from 'react';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
+
+export default function AdminLoginPage() {
+  const [email,setEmail]=useState(''); const [password,setPassword]=useState(''); const [loading,setLoading]=useState(false); const [error,setError]=useState('');
+  async function submit(e:FormEvent) { e.preventDefault(); setLoading(true); setError(''); const supabase=createSupabaseBrowserClient(); const {error}=await supabase.auth.signInWithPassword({email,password}); if(error) setError('Could not sign in with those credentials.'); else window.location.href='/admin/gather'; setLoading(false); }
+  return <main className="flex min-h-screen items-center justify-center bg-paper px-5 py-10"><div className="w-full max-w-[430px] rounded-card bg-white p-7 shadow-card sm:p-9"><div className="text-[26px] font-extrabold tracking-[-.04em]">Etrigan <span className="text-brand">3.0</span></div><p className="mt-7 text-[11px] font-bold uppercase tracking-[.2em] text-brand">Gather Admin</p><h1 className="mt-2 text-3xl font-extrabold tracking-tight">Sign in</h1><p className="mt-2 text-sm text-[#777]">Use your configured Supabase admin account.</p><form onSubmit={submit} className="mt-7 space-y-4"><label className="block"><span className="text-xs font-bold">Email</span><input value={email} onChange={e=>setEmail(e.target.value)} type="email" required className="mt-2 h-11 w-full rounded-xl border border-black/10 bg-[#fafaf8] px-3 outline-none focus:border-brand" /></label><label className="block"><span className="text-xs font-bold">Password</span><input value={password} onChange={e=>setPassword(e.target.value)} type="password" required className="mt-2 h-11 w-full rounded-xl border border-black/10 bg-[#fafaf8] px-3 outline-none focus:border-brand" /></label>{error && <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-brand">{error}</p>}<button disabled={loading} className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand text-sm font-bold text-white disabled:opacity-50">{loading ? <Loader2 className="h-4 w-4 animate-spin"/> : <>Continue <ArrowRight className="h-4 w-4"/></>}</button></form></div></main>;
+}
